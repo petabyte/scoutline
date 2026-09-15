@@ -13,7 +13,14 @@ function slugify(name: string, gradYear: string) {
 }
 
 export async function POST(request: Request) {
-  const { full_name, email, password, grad_year, position } = await request.json();
+  let body: any;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+  }
+
+  const { full_name, email, password, grad_year, position } = body;
 
   if (!full_name || !email || !password || !grad_year || !position) {
     return NextResponse.json({ error: "All fields are required." }, { status: 400 });
@@ -55,18 +62,22 @@ export async function POST(request: Request) {
 
   // Create Stripe checkout session.
   const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL;
-  const session = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    customer_email: email,
-    line_items: [{ price: PLAYER_PRICE_ID, quantity: 1 }],
-    success_url: `${origin}/dashboard?checkout=success`,
-    cancel_url: `${origin}/join?checkout=cancelled`,
-    client_reference_id: userId,
-    subscription_data: {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      customer_email: email,
+      line_items: [{ price: PLAYER_PRICE_ID, quantity: 1 }],
+      success_url: `${origin}/dashboard?checkout=success`,
+      cancel_url: `${origin}/join?checkout=cancelled`,
+      client_reference_id: userId,
+      subscription_data: {
+        metadata: { player_id: userId },
+      },
       metadata: { player_id: userId },
-    },
-    metadata: { player_id: userId },
-  });
-
-  return NextResponse.json({ url: session.url });
+    });
+    return NextResponse.json({ url: session.url });
+  } catch (err: any) {
+    await service.auth.admin.deleteUser(userId);
+    return NextResponse.json({ error: err.message ?? "Could not start checkout." }, { status: 500 });
+  }
 }
