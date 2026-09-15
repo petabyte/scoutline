@@ -74,6 +74,7 @@ export async function POST(request: Request) {
         metadata: { player_id: userId },
       },
       metadata: { player_id: userId },
+      allow_promotion_codes: true,
       ...({ managed_payments: { enabled: false } } as any),
     });
     return NextResponse.json({ url: session.url });
