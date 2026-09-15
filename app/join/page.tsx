@@ -1,20 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-
-function slugify(name: string, gradYear: string) {
-  const base = name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-");
-  const suffix = Math.random().toString(36).slice(2, 6);
-  return `${base}-${gradYear}-${suffix}`;
-}
 
 export default function JoinPage() {
-  const supabase = createClient();
   const [form, setForm] = useState({
     full_name: "",
     email: "",
@@ -34,37 +22,15 @@ export default function JoinPage() {
     setLoading(true);
     setError(null);
 
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
+    const res = await fetch("/api/join", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
     });
-    if (signUpError || !signUpData.user) {
-      setLoading(false);
-      return setError(signUpError?.message ?? "Could not create account.");
-    }
-
-    const slug = slugify(form.full_name, form.grad_year);
-    const { error: insertError } = await supabase.from("players").insert({
-      id: signUpData.user.id,
-      slug,
-      full_name: form.full_name,
-      grad_year: Number(form.grad_year),
-      position: form.position,
-      contact_email: form.email,
-      is_published: false,
-      subscription_status: "inactive",
-    });
-    if (insertError) {
-      setLoading(false);
-      return setError(insertError.message);
-    }
-
-    // Kick off Stripe Checkout for the $9/mo subscription.
-    const res = await fetch("/api/stripe/checkout", { method: "POST" });
-    const { url, error: checkoutError } = await res.json();
+    const { url, error: joinError } = await res.json();
     setLoading(false);
-    if (checkoutError || !url) {
-      setError(checkoutError ?? "Could not start checkout.");
+    if (joinError || !url) {
+      setError(joinError ?? "Could not create account.");
       return;
     }
     window.location.href = url;
