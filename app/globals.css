@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-line-light;
+  }
+  body {
+    @apply bg-paper text-ink font-body;
+  }
+  ::selection {
+    @apply bg-amber/30;
+  }
+  :focus-visible {
+    outline: 2px solid #e2a83d;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .rule {
+    border-top: 1px solid theme("colors.line-light");
+  }
+  .rule-dark {
+    border-top: 1px solid theme("colors.line");
+  }
+  .stat {
+    @apply font-mono tabular-nums;
+  }
+}
