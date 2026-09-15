@@ -22,7 +22,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
-      <body>
+      <body className="min-h-screen flex flex-col">
         <header className="border-b border-line-light bg-paper/95 backdrop-blur sticky top-0 z-40">
           <div className="mx-auto max-w-6xl px-5 h-16 flex items-center justify-between">
             <Link href="/" className="font-display text-xl font-semibold tracking-tight">
@@ -58,7 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </nav>
           </div>
         </header>
-        <main>{children}</main>
+        <main className="flex-1">{children}</main>
         <footer className="border-t border-line-light mt-24">
           <div className="mx-auto max-w-6xl px-5 py-10 text-sm text-ink/60 flex justify-between">
             <span>© {new Date().getFullYear()} Scoutline</span>
