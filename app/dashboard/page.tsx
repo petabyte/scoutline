@@ -23,7 +23,7 @@ export default function Dashboard() {
         router.push("/login");
         return;
       }
-      const { data } = await supabase.from("players").select("*").eq("id", user.id).single();
+      const { data } = await supabase.from("players").select("*").eq("id", user.id).maybeSingle();
       setPlayer(data as Player);
       setLoading(false);
     })();
