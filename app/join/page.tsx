@@ -62,7 +62,7 @@ export default function JoinPage() {
               onChange={(e) => set("grad_year", e.target.value)}
               className="w-full border border-line-light rounded-sm px-3 py-2 text-sm bg-white"
             >
-              {["2026", "2027", "2028", "2029"].map((y) => (
+              {["2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033"].map((y) => (
                 <option key={y} value={y}>
                   {y}
                 </option>

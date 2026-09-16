@@ -24,7 +24,7 @@ export default async function PlayersPage({
 
   const { data: players } = await query.returns<Player[]>();
 
-  const gradYears = [2026, 2027, 2028, 2029];
+  const gradYears = [2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033];
   const positions = ["PG", "SG", "SF", "PF", "C"];
 
   return (
