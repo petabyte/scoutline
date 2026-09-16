@@ -91,7 +91,11 @@ export default function Dashboard() {
   }
 
   if (loading) return <div className="mx-auto max-w-2xl px-5 py-16 text-ink/50">Loading…</div>;
-  if (!player) return null;
+  if (!player) return (
+    <div className="mx-auto max-w-2xl px-5 py-16 text-ink/60">
+      <p>No player profile found. <a href="/join" className="text-amber-700 font-medium">Create your profile →</a></p>
+    </div>
+  );
 
   const isActive = player.subscription_status === "active";
 

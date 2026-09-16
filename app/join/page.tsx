@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function JoinPage() {
+  const supabase = createClient();
   const [form, setForm] = useState({
     full_name: "",
     email: "",
@@ -28,11 +30,14 @@ export default function JoinPage() {
       body: JSON.stringify(form),
     });
     const { url, error: joinError } = await res.json();
-    setLoading(false);
     if (joinError || !url) {
+      setLoading(false);
       setError(joinError ?? "Could not create account.");
       return;
     }
+    // Sign in so the user has a session when they return from Stripe.
+    await supabase.auth.signInWithPassword({ email: form.email, password: form.password });
+    setLoading(false);
     window.location.href = url;
   }
 
