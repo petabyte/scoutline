@@ -22,6 +22,10 @@ export default function Dashboard() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
+        if (searchParams.get("checkout") === "success") {
+          setLoading(false);
+          return;
+        }
         router.push("/login");
         return;
       }
@@ -94,8 +98,16 @@ export default function Dashboard() {
 
   if (loading) return <div className="mx-auto max-w-2xl px-5 py-16 text-ink/50">Loading…</div>;
   if (!player) return (
-    <div className="mx-auto max-w-2xl px-5 py-16 text-ink/60">
-      <p>No player profile found. <a href="/join" className="text-amber-700 font-medium">Create your profile →</a></p>
+    <div className="mx-auto max-w-2xl px-5 py-16 space-y-3">
+      {checkoutSuccess ? (
+        <>
+          <h1 className="font-display text-2xl font-semibold">Payment received — thank you!</h1>
+          <p className="text-ink/60">Please check your email and confirm your address to activate your account and access your dashboard.</p>
+          <p className="text-ink/60">Once confirmed, <a href="/login" className="text-amber-700 font-medium">log in here</a>.</p>
+        </>
+      ) : (
+        <p className="text-ink/60">No player profile found. <a href="/join" className="text-amber-700 font-medium">Create your profile →</a></p>
+      )}
     </div>
   );
 
