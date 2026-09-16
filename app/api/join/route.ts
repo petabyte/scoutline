@@ -40,6 +40,13 @@ export async function POST(request: Request) {
   }
 
   const userId = authData.user.id;
+
+  // Send confirmation email (admin.createUser doesn't send it automatically).
+  await service.auth.resend({
+    type: "signup",
+    email,
+    options: { emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard` },
+  });
   const slug = slugify(full_name, grad_year);
 
   // Insert the player row using service client (bypasses RLS).
