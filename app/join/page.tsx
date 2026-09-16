@@ -24,19 +24,28 @@ export default function JoinPage() {
     setLoading(true);
     setError(null);
 
+    // Use client-side signUp so Supabase sends the confirmation email automatically.
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
+    });
+    if (signUpError || !signUpData.user) {
+      setLoading(false);
+      setError(signUpError?.message ?? "Could not create account.");
+      return;
+    }
+
     const res = await fetch("/api/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, userId: signUpData.user.id }),
     });
     const { url, error: joinError } = await res.json();
     if (joinError || !url) {
       setLoading(false);
-      setError(joinError ?? "Could not create account.");
+      setError(joinError ?? "Could not complete setup.");
       return;
     }
-    // Sign in so the user has a session when they return from Stripe.
-    await supabase.auth.signInWithPassword({ email: form.email, password: form.password });
     setLoading(false);
     window.location.href = url;
   }

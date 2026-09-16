@@ -20,36 +20,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const { full_name, email, password, grad_year, position } = body;
+  const { userId, full_name, email, grad_year, position } = body;
 
-  if (!full_name || !email || !password || !grad_year || !position) {
+  if (!userId || !full_name || !email || !grad_year || !position) {
     return NextResponse.json({ error: "All fields are required." }, { status: 400 });
   }
 
   const service = createServiceClient();
 
-  // Create the auth user via admin API (no session required).
-  const { data: authData, error: authError } = await service.auth.admin.createUser({
-    email,
-    password,
-    email_confirm: false,
-  });
-
-  if (authError || !authData.user) {
-    return NextResponse.json({ error: authError?.message ?? "Could not create account." }, { status: 400 });
-  }
-
-  const userId = authData.user.id;
-
-  // Send confirmation email (admin.createUser doesn't send it automatically).
-  await service.auth.resend({
-    type: "signup",
-    email,
-    options: { emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard` },
-  });
-  const slug = slugify(full_name, grad_year);
-
   // Insert the player row using service client (bypasses RLS).
+  const slug = slugify(full_name, grad_year);
   const { error: insertError } = await service.from("players").insert({
     id: userId,
     slug,
@@ -62,8 +42,6 @@ export async function POST(request: Request) {
   });
 
   if (insertError) {
-    // Roll back the auth user so the email isn't stuck.
-    await service.auth.admin.deleteUser(userId);
     return NextResponse.json({ error: insertError.message }, { status: 400 });
   }
 
@@ -86,7 +64,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ url: session.url });
   } catch (err: any) {
-    await service.auth.admin.deleteUser(userId);
+    await service.from("players").delete().eq("id", userId);
     return NextResponse.json({ error: err.message ?? "Could not start checkout." }, { status: 500 });
   }
 }
