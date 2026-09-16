@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Player } from "@/lib/types";
 
 export default function Dashboard() {
   const supabase = createClient();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const checkoutSuccess = searchParams.get("checkout") === "success";
   const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -101,6 +103,11 @@ export default function Dashboard() {
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-12">
+      {checkoutSuccess && (
+        <div className="mb-6 rounded-sm bg-court/10 border border-court/30 px-4 py-3 text-sm text-court font-medium">
+          Payment successful! Fill in your stats and bio below to complete your profile.
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <h1 className="font-display text-3xl font-semibold">{player.full_name}</h1>
         <a
