@@ -84,12 +84,23 @@ export default function LoginPage() {
             </div>
             <div>
               <label className="block text-xs text-ink/50 mb-1">Role</label>
-              <input
-                placeholder="Head Coach, Recruiting Coordinator, etc."
+              <select
                 value={orgFields.role}
                 onChange={(e) => setOrgFields({ ...orgFields, role: e.target.value })}
                 className="w-full border border-line-light rounded-sm px-3 py-2 text-sm bg-white"
-              />
+              >
+                <option value="">Select a role</option>
+                <optgroup label="Coach">
+                  <option>Head Coach</option>
+                  <option>Assistant Coach</option>
+                  <option>Recruiting Coordinator</option>
+                </optgroup>
+                <optgroup label="Scout">
+                  <option>Scout</option>
+                  <option>Director of Scouting</option>
+                  <option>Talent Evaluator</option>
+                </optgroup>
+              </select>
             </div>
           </>
         )}
