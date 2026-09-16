@@ -3,6 +3,7 @@ import { Oswald, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { createClient } from "@/lib/supabase/server";
+import LogoutButton from "@/components/LogoutButton";
 
 const display = Oswald({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-display" });
 const body = Source_Sans_3({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-body" });
@@ -36,12 +37,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 Ranked lists
               </Link>
               {user ? (
-                <Link
-                  href="/dashboard"
-                  className="rounded-sm bg-ink text-paper px-4 py-2 hover:bg-ink/90"
-                >
-                  Dashboard
-                </Link>
+                <>
+                  <LogoutButton />
+                  <Link
+                    href="/dashboard"
+                    className="rounded-sm bg-ink text-paper px-4 py-2 hover:bg-ink/90"
+                  >
+                    Dashboard
+                  </Link>
+                </>
               ) : (
                 <>
                   <Link href="/login" className="hover:text-amber-700">
