@@ -33,6 +33,8 @@ export function embedUrl(url: string | null): string | null {
   try {
     const u = new URL(url);
     if (u.hostname.includes("youtube.com")) {
+      const shortsMatch = u.pathname.match(/^\/shorts\/([^/?]+)/);
+      if (shortsMatch) return `https://www.youtube.com/embed/${shortsMatch[1]}`;
       const id = u.searchParams.get("v");
       return id ? `https://www.youtube.com/embed/${id}` : null;
     }
