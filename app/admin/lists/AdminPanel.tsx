@@ -52,6 +52,12 @@ export default function AdminPanel({ initialLists, players, admins }: { initialL
     router.refresh();
   }
 
+  async function deleteList(id: string) {
+    if (!confirm("Delete this list? This cannot be undone.")) return;
+    await fetch(`/api/admin/lists/${id}`, { method: "DELETE" });
+    router.refresh();
+  }
+
   async function toggleVerify(playerId: string, isVerified: boolean) {
     await fetch("/api/admin/verify", {
       method: "POST",
@@ -99,14 +105,22 @@ export default function AdminPanel({ initialLists, players, admins }: { initialL
                   <h2 className="font-display text-xl font-semibold">{list.title}</h2>
                   <p className="text-xs text-ink/50">/lists/{list.slug}</p>
                 </div>
-                <button
-                  onClick={() => togglePublish(list.id, list.published)}
-                  className={`text-sm px-3 py-1.5 rounded-sm font-medium ${
-                    list.published ? "bg-court/10 text-court" : "bg-amber/10 text-amber-800"
-                  }`}
-                >
-                  {list.published ? "Published" : "Draft — publish"}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => togglePublish(list.id, list.published)}
+                    className={`text-sm px-3 py-1.5 rounded-sm font-medium ${
+                      list.published ? "bg-court/10 text-court" : "bg-amber/10 text-amber-800"
+                    }`}
+                  >
+                    {list.published ? "Published" : "Draft — publish"}
+                  </button>
+                  <button
+                    onClick={() => deleteList(list.id)}
+                    className="text-sm px-3 py-1.5 rounded-sm font-medium bg-red-50 text-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
 
               <ul className="mt-3 divide-y divide-line-light">
