@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     .from("players")
     .select("stripe_customer_id, contact_email, full_name")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   if (!player) {
     return NextResponse.json({ error: "No player profile found." }, { status: 404 });
