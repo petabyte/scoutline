@@ -21,6 +21,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     data: { user },
   } = await supabase.auth.getUser();
 
+  let isAdmin = false;
+  if (user?.email) {
+    const { createServiceClient } = await import("@/lib/supabase/server");
+    const service = createServiceClient();
+    const { data } = await service.from("admins").select("email").eq("email", user.email).maybeSingle();
+    isAdmin = !!data;
+  }
+
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="min-h-screen flex flex-col">
@@ -38,6 +46,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </Link>
               {user ? (
                 <>
+                  {isAdmin && (
+                    <Link href="/admin/lists" className="hover:text-amber-700 font-medium">
+                      Admin
+                    </Link>
+                  )}
                   <LogoutButton />
                   <Link
                     href="/dashboard"
