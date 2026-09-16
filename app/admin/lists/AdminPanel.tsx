@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AdminPanel({ initialLists, players, admins }: { initialLists: any[]; players: any[]; admins: any[] }) {
+export default function AdminPanel({ initialLists, players, admins, coaches }: { initialLists: any[]; players: any[]; admins: any[]; coaches: any[] }) {
   const router = useRouter();
   const [newList, setNewList] = useState({ title: "", slug: "", description: "" });
   const [itemForm, setItemForm] = useState<Record<string, { player_slug: string; rank: string; note: string }>>({});
@@ -203,6 +203,27 @@ export default function AdminPanel({ initialLists, players, admins }: { initialL
           ))}
         </ul>
       </div>
+      <div>
+        <h2 className="font-display text-2xl font-semibold">Coaches & Scouts</h2>
+        <p className="text-sm text-ink/50 mt-1">{coaches.length} registered</p>
+        <ul className="mt-4 divide-y divide-line-light border-y border-line-light">
+          {coaches.length === 0 && (
+            <li className="py-4 text-sm text-ink/50">No coaches signed up yet.</li>
+          )}
+          {coaches.map((c) => (
+            <li key={c.id} className="py-3 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">{c.full_name}</span>
+                <span className="text-ink/40 text-xs">{new Date(c.created_at).toLocaleDateString()}</span>
+              </div>
+              <p className="text-ink/60 mt-0.5">
+                {[c.role, c.organization].filter(Boolean).join(" · ")}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <div>
         <h2 className="font-display text-2xl font-semibold">Admins</h2>
         <ul className="mt-4 divide-y divide-line-light border-y border-line-light">

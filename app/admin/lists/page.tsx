@@ -19,6 +19,10 @@ export default async function AdminListsPage() {
     .select("id, slug, full_name, grad_year, is_verified, is_published, subscription_status")
     .order("created_at", { ascending: false });
   const { data: admins } = await service.from("admins").select("email").order("email");
+  const { data: coaches } = await service
+    .from("coaches")
+    .select("id, full_name, organization, role, created_at")
+    .order("created_at", { ascending: false });
 
-  return <AdminPanel initialLists={lists ?? []} players={players ?? []} admins={admins ?? []} />;
+  return <AdminPanel initialLists={lists ?? []} players={players ?? []} admins={admins ?? []} coaches={coaches ?? []} />;
 }
