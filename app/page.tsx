@@ -45,8 +45,13 @@ export default function Home() {
           <p className="stat mt-3 text-sm border-t border-line-light pt-3">
             17.8 PPG / 5.3 APG / 2.1 SPG — Fall league, 2026
           </p>
-          <div className="mt-3 aspect-video bg-ink/90 rounded-sm flex items-center justify-center text-paper/70 text-sm">
-            ▶ Highlight film
+          <div className="mt-3 aspect-video rounded-sm overflow-hidden">
+            <iframe
+              src="https://www.youtube.com/embed/4Z0kFQuFTHg"
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
         </div>
       </section>
