@@ -18,6 +18,7 @@ export default async function AdminListsPage() {
     .from("players")
     .select("id, slug, full_name, grad_year, is_verified, is_published, subscription_status")
     .order("created_at", { ascending: false });
+  const { data: admins } = await service.from("admins").select("email").order("email");
 
-  return <AdminPanel initialLists={lists ?? []} players={players ?? []} />;
+  return <AdminPanel initialLists={lists ?? []} players={players ?? []} admins={admins ?? []} />;
 }

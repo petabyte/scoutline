@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function AdminPanel({ initialLists, players }: { initialLists: any[]; players: any[] }) {
+export default function AdminPanel({ initialLists, players, admins }: { initialLists: any[]; players: any[]; admins: any[] }) {
   const router = useRouter();
   const [newList, setNewList] = useState({ title: "", slug: "", description: "" });
   const [itemForm, setItemForm] = useState<Record<string, { player_slug: string; rank: string; note: string }>>({});
+  const [newAdminEmail, setNewAdminEmail] = useState("");
 
   async function createList(e: React.FormEvent) {
     e.preventDefault();
@@ -36,6 +37,18 @@ export default function AdminPanel({ initialLists, players }: { initialLists: an
       method: "DELETE",
       body: JSON.stringify({ player_id: playerId }),
     });
+    router.refresh();
+  }
+
+  async function addAdmin(e: React.FormEvent) {
+    e.preventDefault();
+    await fetch("/api/admin/admins", { method: "POST", body: JSON.stringify({ email: newAdminEmail }) });
+    setNewAdminEmail("");
+    router.refresh();
+  }
+
+  async function removeAdmin(email: string) {
+    await fetch("/api/admin/admins", { method: "DELETE", body: JSON.stringify({ email }) });
     router.refresh();
   }
 
@@ -175,6 +188,35 @@ export default function AdminPanel({ initialLists, players }: { initialLists: an
             </li>
           ))}
         </ul>
+      </div>
+      <div>
+        <h2 className="font-display text-2xl font-semibold">Admins</h2>
+        <ul className="mt-4 divide-y divide-line-light border-y border-line-light">
+          {admins.map((a) => (
+            <li key={a.email} className="py-2 flex items-center justify-between text-sm">
+              <span>{a.email}</span>
+              <button
+                onClick={() => removeAdmin(a.email)}
+                className="text-xs text-red-700 hover:underline"
+              >
+                Remove
+              </button>
+            </li>
+          ))}
+        </ul>
+        <form onSubmit={addAdmin} className="mt-4 flex gap-2">
+          <input
+            type="email"
+            required
+            placeholder="new-admin@email.com"
+            value={newAdminEmail}
+            onChange={(e) => setNewAdminEmail(e.target.value)}
+            className="border border-line-light rounded-sm px-3 py-2 text-sm bg-white flex-1"
+          />
+          <button className="rounded-sm bg-ink text-paper px-4 py-2 text-sm font-medium">
+            Add admin
+          </button>
+        </form>
       </div>
     </div>
   );
